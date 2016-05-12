@@ -8,7 +8,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 
 import com.sentiance.sdk.Sdk;
@@ -44,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    private Button controlDetectionsButton;
     private ListView statusList;
 
     @Override
@@ -51,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        controlDetectionsButton = (Button) findViewById(R.id.controlDetectionsButton);
         statusList = (ListView) findViewById(R.id.statusList);
     }
 
@@ -81,6 +85,9 @@ public class MainActivity extends AppCompatActivity {
         statusItems.add("Wi-Fi last seen: " + dateFormat.format(new Date(statusMessage.wifiLastSeenTimestamp)));
 
         statusList.setAdapter(new ArrayAdapter<>(this, R.layout.list_item_status, R.id.textView, statusItems));
+
+        // Update the controlDetections button
+        controlDetectionsButton.setText(statusMessage.isDetecting ? "Stop Detections" : "Start Detections");
     }
 
     @Override
@@ -102,6 +109,14 @@ public class MainActivity extends AppCompatActivity {
 
         LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(authenticationBroadcastReciever);
         handler.removeCallbacks(refreshStatusRunnable);
+    }
+
+    public void onControlDetectionsButtonClicked(View view) {
+        if (Sdk.getInstance(getApplicationContext()).getStatusMessage().isDetecting) {
+            Sdk.getInstance(getApplicationContext()).stopDetections();
+        } else {
+            Sdk.getInstance(getApplicationContext()).startDetections();
+        }
     }
 
 }

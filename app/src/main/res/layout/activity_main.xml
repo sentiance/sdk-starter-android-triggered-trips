@@ -5,10 +5,18 @@
     android:layout_height="match_parent"
     tools:context="com.sentiance.sdkstarter.controldetections.MainActivity">
 
+    <Button
+        android:id="@+id/controlDetectionsButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:onClick="onControlDetectionsButtonClicked" />
+
     <ListView
         android:id="@+id/statusList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@id/controlDetectionsButton"
         android:clipToPadding="false"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
