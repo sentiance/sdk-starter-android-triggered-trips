@@ -1,4 +1,4 @@
-package com.sentiance.sdkstarter;
+package com.sentiance.sdkstarter.controldetections;
 
 import android.app.Application;
 import android.content.Intent;
@@ -25,6 +25,9 @@ public class MyApplication extends Application {
                 "YOUR_APP_ID",
                 "YOUR_APP_SECRET"
         ));
+
+        // We want to let the user manually control when to run detections, so we disable autostart
+        config.setAutoStart(false);
 
         // Define authentication listener
         AuthenticationListener authenticationListener = new AuthenticationListener() {

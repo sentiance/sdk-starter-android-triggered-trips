@@ -1,4 +1,4 @@
-package com.sentiance.sdkstarter;
+package com.sentiance.sdkstarter.controldetections;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

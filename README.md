@@ -1,5 +1,5 @@
-# Sentiance SDK Starter
-A simple single-view application that uses the Sentiance SDK.
+# Sentiance SDK Starter: control detections
+A simple single-view application that uses the Sentiance SDK and allows the user to manually control when detections occur.
    
 Steps applied: [Sentiance Android SDK docs](https://audience.sentiance.com/docs/sdk/android/integration)
 

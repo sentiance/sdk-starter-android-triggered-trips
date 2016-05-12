@@ -1,4 +1,4 @@
-package com.sentiance.sdkstarter;
+package com.sentiance.sdkstarter.controldetections;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
             public void onReceive(Context context, Intent intent) {
                 refreshLabels();
             }
-        }, new IntentFilter(MyApplication.ACTION_SDK_AUTHENTICATION_SUCCESS));
+        }, new IntentFilter(com.sentiance.sdkstarter.controldetections.MyApplication.ACTION_SDK_AUTHENTICATION_SUCCESS));
 
         refreshLabels();
     }
