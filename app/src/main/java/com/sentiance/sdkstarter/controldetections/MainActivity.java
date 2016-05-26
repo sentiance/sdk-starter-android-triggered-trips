@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
     };
 
     private Button controlDetectionsButton;
+    private Button controlTripButton;
     private ListView statusList;
 
     @Override
@@ -64,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         controlDetectionsButton = (Button) findViewById(R.id.controlDetectionsButton);
+        controlTripButton = (Button) findViewById(R.id.controlTripButton);
         statusList = (ListView) findViewById(R.id.statusList);
     }
 
@@ -95,8 +97,23 @@ public class MainActivity extends AppCompatActivity {
 
         statusList.setAdapter(new ArrayAdapter<>(this, R.layout.list_item_status, R.id.textView, statusItems));
 
-        // Update the controlDetections button
-        controlDetectionsButton.setText(statusMessage.isDetecting ? "Stop Detections" : "Start Detections");
+        // Update the controlDetectionsButton
+        if (Sdk.getInstance(getApplicationContext()).getFlavor().equals("triggered_trips")) {
+            controlDetectionsButton.setText("Start Detections (disabled)");
+            controlDetectionsButton.setEnabled(false);
+        } else {
+            controlDetectionsButton.setText(statusMessage.isDetecting ? "Stop Detections" : "Start Detections");
+            controlDetectionsButton.setEnabled(true);
+        }
+
+        // Update the controlTripButton
+        if (!Sdk.getInstance(getApplicationContext()).getFlavor().equals("triggered_trips")) {
+            controlTripButton.setText("Start Trip (disabled)");
+            controlTripButton.setEnabled(false);
+        } else {
+            controlTripButton.setText(Sdk.getInstance(getApplicationContext()).trip().isTripOngoing() ? "Stop Trip" : "Start Trip");
+            controlTripButton.setEnabled(true);
+        }
     }
 
     @Override
@@ -123,9 +140,24 @@ public class MainActivity extends AppCompatActivity {
     public void onControlDetectionsButtonClicked(View view) {
         if (Sdk.getInstance(getApplicationContext()).getStatusMessage().isDetecting) {
             Sdk.getInstance(getApplicationContext()).stopDetections();
+            controlDetectionsButton.setText("Stopping Detections ...");
+            controlDetectionsButton.setEnabled(false);
         } else {
             Sdk.getInstance(getApplicationContext()).startDetections();
+            controlDetectionsButton.setText("Starting Detections ...");
+            controlDetectionsButton.setEnabled(false);
         }
     }
 
+    public void onControlTripButtonClicked(View view) {
+        if (Sdk.getInstance(getApplicationContext()).trip().isTripOngoing()) {
+            Sdk.getInstance(getApplicationContext()).trip().stopTrip();
+            controlTripButton.setText("Stopping Trip ...");
+            controlTripButton.setEnabled(false);
+        } else {
+            Sdk.getInstance(getApplicationContext()).trip().startTrip(null, null);
+            controlTripButton.setText("Starting Trip ...");
+            controlTripButton.setEnabled(false);
+        }
+    }
 }

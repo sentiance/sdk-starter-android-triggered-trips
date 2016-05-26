@@ -9,14 +9,22 @@
         android:id="@+id/controlDetectionsButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
+        android:layout_marginTop="16dp"
         android:onClick="onControlDetectionsButtonClicked" />
+
+    <Button
+        android:id="@+id/controlTripButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/controlDetectionsButton"
+        android:layout_marginBottom="16dp"
+        android:onClick="onControlTripButtonClicked" />
 
     <ListView
         android:id="@+id/statusList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/controlDetectionsButton"
+        android:layout_below="@id/controlTripButton"
         android:clipToPadding="false"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
