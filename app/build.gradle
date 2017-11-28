@@ -5,11 +5,11 @@ android {
     buildToolsVersion "23.0.2"
 
     defaultConfig {
-        applicationId "com.sentiance.sdkstarter.controldetections"
+        applicationId "com.sentiance.sdkstarter.triggeredtrips"
         minSdkVersion 14
         targetSdkVersion 23
-        versionCode 3
-        versionName "0.0.3"
+        versionCode 4
+        versionName "0.0.4"
     }
     buildTypes {
         release {
@@ -26,5 +26,5 @@ dependencies {
 
     // Include the latest version of the Sentiance SDK.
     // For the latest version, check https://audience.sentiance.com/docs/sdk/android/integration
-    compile ('com.sentiance:sdk:3.5.1@aar') {transitive = true}
+    compile ('com.sentiance:sdk:3.10.2@aar') {transitive = true}
 }
