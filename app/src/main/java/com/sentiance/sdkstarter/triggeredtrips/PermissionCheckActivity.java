@@ -1,4 +1,4 @@
-package com.sentiance.sdkstarter.controldetections;
+package com.sentiance.sdkstarter.triggeredtrips;
 
 import android.Manifest;
 import android.content.DialogInterface;

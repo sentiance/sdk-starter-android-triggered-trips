@@ -3,21 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.sentiance.sdkstarter.controldetections.MainActivity">
-
-    <Button
-        android:id="@+id/controlDetectionsButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:onClick="onControlDetectionsButtonClicked" />
+    tools:context="com.sentiance.sdkstarter.triggeredtrips.MainActivity">
 
     <Button
         android:id="@+id/controlTripButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/controlDetectionsButton"
-        android:layout_marginBottom="16dp"
+        android:layout_marginTop="16dp"
         android:onClick="onControlTripButtonClicked" />
 
     <ListView
