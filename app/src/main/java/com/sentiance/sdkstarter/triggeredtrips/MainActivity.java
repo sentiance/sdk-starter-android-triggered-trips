@@ -16,14 +16,12 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.sentiance.sdk.SdkStatus;
 import com.sentiance.sdk.Sentiance;
-import com.sentiance.sdk.StartTripCallback;
-import com.sentiance.sdk.StopTripCallback;
-import com.sentiance.sdk.TripType;
-import com.sentiance.sdk.modules.trip.Trip;
+import com.sentiance.sdk.trip.StartTripCallback;
+import com.sentiance.sdk.trip.StopTripCallback;
+import com.sentiance.sdk.trip.TripType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,10 +29,12 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
+    private final TripStartStopCallback mTripStartStopCallback = new TripStartStopCallback();
     private final BroadcastReceiver statusUpdateReceiver = new BroadcastReceiver() {
         @Override
-        public void onReceive(Context context, Intent intent) {
+        public void onReceive (Context context, Intent intent) {
             refreshStatus();
+            updateButtonTexts();
         }
     };
 
@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
     private ListView statusList;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate (Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -52,31 +52,38 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_main);
 
-        controlTripButton = (Button) findViewById(R.id.controlTripButton);
-        statusList = (ListView) findViewById(R.id.statusList);
+        controlTripButton = findViewById(R.id.controlTripButton);
+        statusList = findViewById(R.id.statusList);
     }
 
     @Override
-    protected void onResume() {
+    protected void onResume () {
         super.onResume();
 
         // Register a receiver so we are notified by MyApplication when the Sentiance SDK status was updated.
         LocalBroadcastManager.getInstance(this).registerReceiver(statusUpdateReceiver, new IntentFilter(MyApplication.ACTION_SENTIANCE_STATUS_UPDATE));
 
         refreshStatus();
+
+        if (!Sentiance.getInstance(getApplicationContext()).isInitialized()) {
+            controlTripButton.setEnabled(false);
+        }
+        updateButtonTexts();
     }
 
     @Override
-    protected void onPause() {
+    protected void onPause () {
         super.onPause();
 
         LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(statusUpdateReceiver);
     }
 
-    private void refreshStatus() {
+    private void refreshStatus () {
         List<String> statusItems = new ArrayList<>();
 
         if (Sentiance.getInstance(this).isInitialized()) {
+            controlTripButton.setEnabled(true);
+
             statusItems.add("SDK version: " + Sentiance.getInstance(this).getVersion());
             statusItems.add("User ID: " + Sentiance.getInstance(this).getUserId());
 
@@ -91,64 +98,72 @@ public class MainActivity extends AppCompatActivity {
             statusItems.add(formatQuota("Wi-Fi", sdkStatus.wifiQuotaStatus, Sentiance.getInstance(this).getWiFiQuotaUsage(), Sentiance.getInstance(this).getWiFiQuotaLimit()));
             statusItems.add(formatQuota("Mobile data", sdkStatus.mobileQuotaStatus, Sentiance.getInstance(this).getMobileQuotaUsage(), Sentiance.getInstance(this).getMobileQuotaLimit()));
             statusItems.add(formatQuota("Disk", sdkStatus.diskQuotaStatus, Sentiance.getInstance(this).getDiskQuotaUsage(), Sentiance.getInstance(this).getDiskQuotaLimit()));
-        } else {
+        }
+        else {
             statusItems.add("SDK not initialized");
         }
 
         statusList.setAdapter(new ArrayAdapter<>(this, R.layout.list_item_status, R.id.textView, statusItems));
-
-        controlTripButton.setText(Sentiance.getInstance(getApplicationContext()).isTripOngoing(TripType.ANY) ? "Stop Trip" : "Start Trip");
-        controlTripButton.setEnabled(true);
     }
 
-    public void onControlTripButtonClicked(View view) {
-        if (Sentiance.getInstance(getApplicationContext()).isTripOngoing(TripType.ANY)) {
+    public void onControlTripButtonClicked (View view) {
+        Sentiance sentiance = Sentiance.getInstance(getApplicationContext());
+        if (!sentiance.isInitialized()) {
+            return;
+        }
+
+        if (sentiance.isTripOngoing(TripType.EXTERNAL_TRIP)) {
             stopTrip();
-        } else {
+        }
+        else {
             startTrip();
         }
-    }
-
-    private void startTrip() {
-        controlTripButton.setText("Starting Trip ...");
         controlTripButton.setEnabled(false);
-
-        Sentiance.getInstance(getApplicationContext()).startTrip(null, null, new StartTripCallback() {
-            @Override
-            public void onSuccess() {
-                Toast.makeText(MainActivity.this, "Trip started", Toast.LENGTH_LONG).show();
-                controlTripButton.setText("Stop trip");
-                controlTripButton.setEnabled(true);
-            }
-
-            @Override
-            public void onFailure(SdkStatus sdkStatus) {
-                Toast.makeText(MainActivity.this, "Could not start trip (" + sdkStatus.toString() + ")", Toast.LENGTH_LONG).show();
-                controlTripButton.setText("Start trip");
-                controlTripButton.setEnabled(true);
-            }
-        });
+        updateButtonTexts();
     }
 
-    private void stopTrip() {
-        controlTripButton.setText("Stopping Trip ...");
-        controlTripButton.setEnabled(false);
-
-        Sentiance.getInstance(getApplicationContext()).stopTrip(new StopTripCallback() {
-            @Override
-            public void onTripStopped(@Nullable Trip trip) {
-                Toast.makeText(MainActivity.this, "Trip stopped", Toast.LENGTH_LONG).show();
-                controlTripButton.setText("Start trip");
-                controlTripButton.setEnabled(true);
-            }
-        });
+    private void startTrip () {
+        Sentiance.getInstance(getApplicationContext()).startTrip(null, null, mTripStartStopCallback);
     }
 
-    private String formatQuota(String name, SdkStatus.QuotaStatus status, long bytesUsed, long bytesLimit) {
+    private void stopTrip () {
+        Sentiance.getInstance(getApplicationContext()).stopTrip(mTripStartStopCallback);
+    }
+
+    private String formatQuota (String name, SdkStatus.QuotaStatus status, long bytesUsed, long bytesLimit) {
         return String.format(Locale.US, "%s quota: %s / %s (%s)",
                 name,
                 Formatter.formatShortFileSize(this, bytesUsed),
                 Formatter.formatShortFileSize(this, bytesLimit),
                 status.name());
+    }
+
+    private void updateButtonTexts () {
+        Sentiance sentiance = Sentiance.getInstance(getApplicationContext());
+
+        if (sentiance.isTripOngoing(TripType.EXTERNAL_TRIP)) {
+            controlTripButton.setText(R.string.stop_trip);
+        }
+        else {
+            controlTripButton.setText(R.string.start_trip);
+        }
+    }
+
+    private class TripStartStopCallback implements StopTripCallback, StartTripCallback {
+
+        @Override
+        public void onSuccess () {
+            handleTripStartStop();
+        }
+
+        @Override
+        public void onFailure (@Nullable SdkStatus sdkStatus) {
+            handleTripStartStop();
+        }
+
+        private void handleTripStartStop () {
+            updateButtonTexts();
+            controlTripButton.setEnabled(true);
+        }
     }
 }
