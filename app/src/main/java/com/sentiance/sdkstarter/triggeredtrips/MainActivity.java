@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void onControlTripButtonClicked (View view) {
         Sentiance sentiance = Sentiance.getInstance(getApplicationContext());
-        if (sentiance.getInitState() != InitState.INITIALIZED) {
+        if (sentiance.getInitState() != InitState.INITIALIZED || !isSdkStarted()) {
             return;
         }
 
@@ -130,6 +130,10 @@ public class MainActivity extends AppCompatActivity {
         Sentiance.getInstance(getApplicationContext()).stopTrip(mTripStartStopCallback);
     }
 
+    private boolean isSdkStarted () {
+        return Sentiance.getInstance(this).getSdkStatus().startStatus == SdkStatus.StartStatus.STARTED;
+    }
+    
     private String formatQuota (String name, SdkStatus.QuotaStatus status, long bytesUsed, long bytesLimit) {
         return String.format(Locale.US, "%s quota: %s / %s (%s)",
                 name,
