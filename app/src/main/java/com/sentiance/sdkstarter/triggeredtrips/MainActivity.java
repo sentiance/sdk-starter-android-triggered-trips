@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
 
         refreshStatus();
 
-        if (!Sentiance.getInstance(getApplicationContext()).isInitialized()) {
+        if (Sentiance.getInstance(getApplicationContext()).getInitState() != InitState.INITIALIZED) {
             controlTripButton.setEnabled(false);
         }
         updateButtonTexts();
@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
     private void refreshStatus () {
         List<String> statusItems = new ArrayList<>();
 
-        if (Sentiance.getInstance(this).isInitialized()) {
+        if (Sentiance.getInstance(this).getInitState() == InitState.INITIALIZED) {
             controlTripButton.setEnabled(true);
 
             statusItems.add("SDK version: " + Sentiance.getInstance(this).getVersion());
@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void onControlTripButtonClicked (View view) {
         Sentiance sentiance = Sentiance.getInstance(getApplicationContext());
-        if (!sentiance.isInitialized()) {
+        if (sentiance.getInitState() != InitState.INITIALIZED) {
             return;
         }
 
