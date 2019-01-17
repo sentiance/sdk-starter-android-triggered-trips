@@ -18,6 +18,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 
+import com.sentiance.sdk.InitState;
 import com.sentiance.sdk.SdkStatus;
 import com.sentiance.sdk.Sentiance;
 import com.sentiance.sdk.trip.StartTripCallback;
