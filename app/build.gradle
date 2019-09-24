@@ -1,14 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 29
 
     defaultConfig {
-        applicationId "com.sentiance.sdkstarter.triggeredtrips"
+        applicationId "com.sentiance.sdkstarter"
         minSdkVersion 14
-        targetSdkVersion 27
-        versionCode 6
-        versionName "0.1.0"
+        targetSdkVersion 29
+        versionCode 7
+        versionName "0.2.0"
     }
     buildTypes {
         release {
@@ -21,12 +21,14 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     testImplementation 'junit:junit:4.12'
-    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.0.0'
 
     // Include the latest version of the Sentiance SDK.
     // For the latest version, check https://developers.sentiance.com/docs/sdk/android/integration
-    implementation ('com.sentiance:sdk:4.5.1@aar') {
+    implementation ('com.sentiance:sdk:4.11.0@aar') {
         transitive = true
         exclude group: 'com.android.support'
     }
+    implementation 'org.jetbrains:annotations-java5:15.0'
 }

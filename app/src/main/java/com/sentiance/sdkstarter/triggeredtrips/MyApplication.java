@@ -7,10 +7,11 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.Nullable;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+
+import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.sentiance.sdk.OnInitCallback;
 import com.sentiance.sdk.OnSdkStatusUpdateHandler;
@@ -107,7 +108,7 @@ public class MyApplication extends Application implements OnInitCallback, OnSdkS
                 .setContentIntent(pendingIntent)
                 .setShowWhen(false)
                 .setSmallIcon(R.mipmap.ic_launcher)
-                .setPriority(android.support.v4.app.NotificationCompat.PRIORITY_MIN)
+                .setPriority(NotificationCompat.PRIORITY_MIN)
                 .build();
     }
 
